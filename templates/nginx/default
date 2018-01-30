@@ -1,0 +1,117 @@
+#-----------------------------------------------------------------------------#
+# NOTE                                                                        #
+#-----------------------------------------------------------------------------#
+# Whenever needed, add the following directive to a location{} block          #
+# to flush cache:                                                             #
+#                                                                             #
+# proxy_ignore_headers X-Accel-Expires Expires Cache-Control;                 #
+#-----------------------------------------------------------------------------#
+
+proxy_cache_path /tmp/nginx_cache levels=1:2 keys_zone=cache:30m max_size=250m;
+proxy_temp_path /tmp/nginx_proxy 1 2;
+
+server {
+    client_max_body_size 100M;
+
+    ###############################################
+    ###############################################
+    ##
+    ## AUTHENTICATION SERVER v2
+    ##
+
+    location /oauth2/ {
+        proxy_pass http://127.0.0.1:<%= node['oauth2']['port'] %>;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    ###############################################
+    ###############################################
+    ##
+    ## SPOD
+    ##
+
+    location /spod/ {
+        proxy_pass http://127.0.0.1:<%= node['spod']['port'] %>;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    location /ow_plugins/ode/datalet_images/ {
+        proxy_pass http://127.0.0.1:<%= node['spod']['port'] %>/ow_plugins/ode/datalet_images/;
+        add_header 'Cache-Control' 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
+        expires off;
+    }
+
+    location /realtime_notification {
+       proxy_pass http://127.0.0.1:<%= node['spod']['notification_port'] %>;
+       #proxy_http_version 1.1;
+       #proxy_set_header Upgrade upgrade;
+       #proxy_set_header Connection close;
+       proxy_http_version 1.1;
+       proxy_set_header Upgrade $http_upgrade;
+       proxy_set_header Connection "upgrade";
+       proxy_set_header Host $host;
+    }
+
+    location /ethersheet/ {
+       proxy_pass http://127.0.0.1:<%= node['spod']['ethersheet_port'] %>/;
+       proxy_http_version 1.1;
+       proxy_set_header Upgrade $http_upgrade;
+       proxy_set_header Connection 'upgrade';
+       proxy_set_header Host $host;
+       proxy_cache_bypass $http_upgrade;
+    }
+
+    location /es_client {
+       proxy_pass http://127.0.0.1:<%= node['spod']['ethersheet_port'] %>;
+    }
+
+    location /etherpad/ {
+       proxy_pass http://127.0.0.1:<%= node['spod']['etherpad_port'] %>/;
+       proxy_http_version 1.1;
+       proxy_set_header Upgrade $http_upgrade;
+       proxy_set_header Connection 'upgrade';
+       proxy_set_header Host $host;
+       proxy_cache_bypass $http_upgrade;
+    }
+
+    ###############################################
+    ###############################################
+    ##
+    ## CKAN
+    ##
+
+    location /<%= node['ckan']['alias'] %> {
+        proxy_pass http://127.0.0.1:<%= node['ckan']['port'] %>/;
+        proxy_set_header Host $host;
+        proxy_cache cache;
+        proxy_cache_bypass $cookie_auth_tkt;
+        proxy_no_cache $cookie_auth_tkt;
+        proxy_cache_valid 30m;
+        proxy_cache_key $host$scheme$proxy_host$request_uri;
+    }
+
+    ###############################################
+    ###############################################
+    ##
+    ## WORDPRESS
+    ##
+
+    location / {
+        # Next line is required is Wordpress is ran in a subdirectory
+        # rewrite ^/site(/.*) $1 break;
+        proxy_pass http://127.0.0.1:<%= node['wordpress']['port'] %>;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+
+}
+

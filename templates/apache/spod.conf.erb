@@ -1,0 +1,28 @@
+#Alias /<%= node['spod']['alias'] %> "<%= node['spod']['root'] %>" 
+
+<VirtualHost *:<%= node['spod']['port'] %>>
+  ServerName <%= node['hostname'] %>
+  ServerAdmin 'webmaster@routetopa.eu'
+
+  DocumentRoot <%= node['spod']['root'] %>
+  <Directory "/">
+          Options FollowSymLinks
+          AllowOverride None
+  </Directory>
+  <Directory <%= node['spod']['root'] %> >
+          Options Indexes FollowSymLinks MultiViews
+          AllowOverride All
+          Require all granted
+  </Directory>
+
+  ErrorLog /var/log/apache2-default/<%= node['spod']['alias'] %>.error.log
+
+  LogLevel warn
+
+  CustomLog /var/log/apache2-default/<%= node['spod']['alias'] %>.access.log combined
+  ServerSignature Off
+
+  AddType application/x-httpd-php .php
+  AddType application/x-httpd-php-source .phps
+  DirectoryIndex index.php index.html
+</VirtualHost>

@@ -1,0 +1,21 @@
+{
+  "id": "default",
+
+  "admin_password"          : "loveopendata",
+  
+  "ckan_pg_password"        : "loveopendata",
+
+  "oauth2_mysql_password"   : "loveopendata",
+
+  "service_ckan_api_key"    : "",
+  "service_firebase_api_key": "",
+  "service_mail_password"   : "",
+
+  "spod_mysql_password"     : "loveopendata",
+  "spod_oauth2_secret_key"  : "loveopendata",
+
+  "sys_pg_admin_password"   : "loveopendata",
+  "sys_mysql_admin_password": "loveopendata",
+
+  "wordpress_mysql_password": "loveopendata"
+}

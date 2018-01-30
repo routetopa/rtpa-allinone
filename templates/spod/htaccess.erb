@@ -1,0 +1,26 @@
+Options +FollowSymLinks
+RewriteEngine On
+
+AddEncoding gzip .gz
+AddEncoding gzip .gzip
+<FilesMatch "\.(svg)$>
+  ForceType image/svg+xml
+</FilesMatch>
+<FilesMatch "\.(js.gz|js.gzip)$">
+  ForceType text/javascript
+</FilesMatch>
+<FilesMatch "\.(css.gz|css.gzip)$">
+  ForceType text/css
+</FilesMatch>
+
+RewriteRule ^<%= node['spod']['alias'] %>/(.*)$ $1
+
+RewriteCond %{REQUEST_URI} !^/index\.php
+RewriteCond %{REQUEST_URI} !/ow_updates/index\.php
+RewriteCond %{REQUEST_URI} !/ow_updates/
+RewriteCond %{REQUEST_URI} !/ow_cron/run\.php
+RewriteCond %{REQUEST_URI} !/e500\.php
+RewriteCond %{REQUEST_URI} !/captcha\.php
+#RewriteCond %{REQUEST_URI} (/|\.php|\.html|\.htm|\.xml|\.feed|robots\.txt|\.raw|/[^.]*)$  [NC]
+RewriteCond %{REQUEST_FILENAME} (/|\.php|\.html|\.htm|\.xml|\.feed|robots\.txt|\.raw|/[^.]*)$  [NC]
+RewriteRule (.*) index.php

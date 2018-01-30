@@ -1,0 +1,18 @@
+name 'rtpa-allinone'
+maintainer 'ISISLab - Dipartimento di Informatica - Universita degli Studi di Salerno'
+maintainer_email 'webmaster@routetopa.eu'
+license 'mit'
+description 'Installs/Configures rtpa-allinone'
+long_description 'Installs/Configures rtpa-allinone'
+version '0.1.2'
+chef_version '>= 12.1' if respond_to?(:chef_version)
+
+depends 'composer', '~> 2.6.1'
+depends 'database', '~> 6.1'
+depends 'httpd', '~> 0.6'
+depends 'mysql', '~> 8.5'
+depends 'mysql2_chef_gem', '~> 2.1'
+depends 'nodejs', '~> 5.0.0'
+depends 'postgresql', '~> 6.1.1'
+depends 'solr_6', '~> 1.0.1'
+depends 'tar', '~> 2.1.1'
